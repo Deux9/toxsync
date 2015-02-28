@@ -1,0 +1,33 @@
+#!/bin/bash
+ID="2222222" #PGP ID
+TOXDIR="$HOME/.config/tox/"; #Path to Your Tox config directory
+BACKUP="$HOME/ownCloud/toxbackup.pgp"; #Path to your Backup File
+CLIENT="qtox"; #Tox start command, e.g. qtox, utox...
+PROFILE="idontrungentoo"; #fallback profile if no argument given
+
+
+################################  Don't change anything below this line unless you know what you are doing
+if [ -n "$1" ]; then
+	CLIENT="$1";
+fi; #Check if argument has been given, else the fallback option will be activated
+
+if [ -n "$2" ]; then
+	PROFILE="$2";
+fi; #Check if argument has been given, else the fallback option will be activated
+
+TOXFILE="$TOXDIR/$PROFILE.tox";
+
+if [ "$CLIENT" = "qtox" ]; then
+	START="$CLIENT -p $PROFILE";
+fi;
+
+if [ "$1" = "toxic" ]; then
+	START="$CLIENT -f $TOXFILE";
+fi;
+
+gpg --yes -o "$TOXFILE" -d "$BACKUP";
+$START;
+gpg --yes -r "$ID" -o "$BACKUP" -e "$TOXFILE";
+
+
+exit 0
